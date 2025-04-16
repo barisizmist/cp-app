@@ -1,4 +1,4 @@
-import { currentUser } from '@clerk/nextjs/server';
+import { useUser } from '@clerk/nextjs';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { SignInButton, SignUpButton } from '@clerk/nextjs';
 import { Button } from './ui/button';
@@ -7,11 +7,12 @@ import { Avatar, AvatarImage } from './ui/avatar';
 import { Separator } from './ui/separator';
 import { LinkIcon, MapPinIcon } from 'lucide-react';
 
-async function Sidebar() {
-  const authUser = await currentUser();
-  if (!authUser) return <UnAuthenticatedSidebar />;
+function Sidebar() {
+  const { user } = useUser();
 
-  const user = {
+  if (!user) return <UnAuthenticatedSidebar />;
+
+  const userData = {
     username: 'Barış',
     name: 'Barış Demirdelen',
     image: 'https://avatars.githubusercontent.com/u/44036571?v=4',
@@ -23,36 +24,36 @@ async function Sidebar() {
       followers: 1000
     }
   };
-  if (!user) return null;
+  if (!userData) return null;
 
   return (
     <div className="sticky top-20">
       <Card>
         <CardContent className="pt-6">
           <div className="flex flex-col items-center text-center">
-            <Link href={`/profile/${user.username}`} className="flex flex-col items-center justify-center">
+            <Link href={`/profile/${userData.username}`} className="flex flex-col items-center justify-center">
               <Avatar className="w-20 h-20 border-2 ">
-                <AvatarImage src={user.image || '/avatar.png'} />
+                <AvatarImage src={userData.image || '/avatar.png'} />
               </Avatar>
 
               <div className="mt-4 space-y-1">
-                <h3 className="font-semibold">{user.name}</h3>
-                <p className="text-sm text-muted-foreground">{user.username}</p>
+                <h3 className="font-semibold">{userData.name}</h3>
+                <p className="text-sm text-muted-foreground">{userData.username}</p>
               </div>
             </Link>
 
-            {user.bio && <p className="mt-3 text-sm text-muted-foreground">{user.bio}</p>}
+            {userData.bio && <p className="mt-3 text-sm text-muted-foreground">{userData.bio}</p>}
 
             <div className="w-full">
               <Separator className="my-4" />
               <div className="flex justify-between">
                 <div>
-                  <p className="font-medium">{user._count.following}</p>
+                  <p className="font-medium">{userData._count.following}</p>
                   <p className="text-xs text-muted-foreground">Following</p>
                 </div>
                 <Separator orientation="vertical" />
                 <div>
-                  <p className="font-medium">{user._count.followers}</p>
+                  <p className="font-medium">{userData._count.followers}</p>
                   <p className="text-xs text-muted-foreground">Followers</p>
                 </div>
               </div>
@@ -62,13 +63,13 @@ async function Sidebar() {
             <div className="w-full space-y-2 text-sm">
               <div className="flex items-center text-muted-foreground">
                 <MapPinIcon className="w-4 h-4 mr-2" />
-                {user.location || 'No location'}
+                {userData.location || 'No location'}
               </div>
               <div className="flex items-center text-muted-foreground">
                 <LinkIcon className="w-4 h-4 mr-2 shrink-0" />
-                {user.website ? (
-                  <a href={`${user.website}`} className="hover:underline truncate" target="_blank">
-                    {user.website}
+                {userData.website ? (
+                  <a href={`${userData.website}`} className="hover:underline truncate" target="_blank">
+                    {userData.website}
                   </a>
                 ) : (
                   'No website'
