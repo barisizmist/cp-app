@@ -40,11 +40,16 @@ const CategoryDetailPage = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">{category} Kategorisi</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <Button onClick={() => router.back()} className="mb-4">
+        ← Geri
+      </Button>
+      <h1 className="text-3xl font-bold uppercase mb-6">{category}</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {products.map((product) => (
           <Card key={product.id} className="p-4">
-            <Image src={product.image} alt={product.name} width={200} height={150} className="rounded-md" />
+            <div className="relative w-full h-[180px]">
+              <Image src={product.image} alt={product.name} layout="fill" objectFit="cover" className="rounded-md" />
+            </div>
             <h2 className="text-lg font-semibold mt-2">{product.name}</h2>
             <p className="text-sm text-gray-600">{product.description}</p>
             <div className="flex justify-between items-center mt-2">
