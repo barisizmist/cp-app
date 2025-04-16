@@ -1,11 +1,14 @@
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogOverlay } from '@/components/ui/dialog';
 
 const CategoryDetailPage = () => {
   const router = useRouter();
   const { category } = router.query;
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const products = [
     {
@@ -47,7 +50,7 @@ const CategoryDetailPage = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {products.map((product) => (
           <Card key={product.id} className="p-4">
-            <div className="relative w-full h-[180px]">
+            <div className="relative w-full h-[180px] cursor-pointer" onClick={() => setSelectedImage(product.image)}>
               <Image src={product.image} alt={product.name} layout="fill" objectFit="cover" className="rounded-md" />
             </div>
             <h2 className="text-lg font-semibold mt-2">{product.name}</h2>
@@ -59,6 +62,17 @@ const CategoryDetailPage = () => {
           </Card>
         ))}
       </div>
+
+      <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
+        <DialogOverlay className="fixed inset-0 bg-black bg-opacity-50" />
+        <DialogContent className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
+          {selectedImage && (
+            <div className="relative w-full max-w-3xl h-auto">
+              <Image src={selectedImage} alt="Selected Product" layout="responsive" width={800} height={600} objectFit="contain" className="rounded-md" />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
