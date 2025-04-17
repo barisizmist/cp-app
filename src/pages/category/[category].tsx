@@ -8,7 +8,9 @@ import { Dialog, DialogContent, DialogOverlay } from '@/components/ui/dialog';
 const CategoryDetailPage = () => {
   const router = useRouter();
   const { category } = router.query;
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [quantity, setQuantity] = useState(1);
 
   const products = [
     {
@@ -41,6 +43,15 @@ const CategoryDetailPage = () => {
     }
   ];
 
+  const handleAddClick = (product) => {
+    setSelectedProduct(product);
+    setQuantity(1);
+  };
+
+  const handleQuantityChange = (change) => {
+    setQuantity((prev) => Math.max(1, prev + change));
+  };
+
   return (
     <div className="p-4">
       <Button onClick={() => router.back()} className="mb-4">
@@ -57,7 +68,9 @@ const CategoryDetailPage = () => {
             <p className="text-sm text-gray-600">{product.description}</p>
             <div className="flex justify-between items-center mt-2">
               <span className="text-lg font-bold">₺{product.price}</span>
-              <Button className="text-sm">Ekle +</Button>
+              <Button className="text-sm" onClick={() => handleAddClick(product)}>
+                Ekle +
+              </Button>
             </div>
           </Card>
         ))}
@@ -73,6 +86,34 @@ const CategoryDetailPage = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      {selectedProduct && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white shadow-2xl shadow-black/70 p-6 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
+          <button className="absolute top-2 right-2 text-gray-500 hover:text-gray-700" onClick={() => setSelectedProduct(null)}>
+            ✕
+          </button>
+          <div className="flex items-center">
+            <Image src={selectedProduct.image} alt={selectedProduct.name} width={80} height={80} className="rounded-md" />
+            <div className="ml-4">
+              <h2 className="text-lg font-semibold">{selectedProduct.name}</h2>
+              <p className="text-sm text-gray-600">{selectedProduct.description}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="text-lg font-bold">₺{(selectedProduct.price * quantity).toFixed(2)}</span>
+            <div className="flex items-center">
+              <button className="px-4 py-2 bg-gray-200 rounded-l-md" onClick={() => handleQuantityChange(-1)}>
+                -
+              </button>
+              <span className="px-4 py-2 border-t border-b">{quantity}</span>
+              <button className="px-4 py-2 bg-gray-200 rounded-r-md" onClick={() => handleQuantityChange(1)}>
+                +
+              </button>
+            </div>
+            <Button className="bg-orange-500 text-white px-4 py-2 rounded-md">Ekle ₺{(selectedProduct.price * quantity).toFixed(2)}</Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
