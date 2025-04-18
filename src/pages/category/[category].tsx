@@ -76,7 +76,7 @@ const CategoryDetailPage = () => {
         ))}
       </div>
 
-      <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
+      {/* <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
         <DialogOverlay className="fixed inset-0 bg-black bg-opacity-50" />
         <DialogContent className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
           {selectedImage && (
@@ -85,7 +85,7 @@ const CategoryDetailPage = () => {
             </div>
           )}
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
 
       {selectedProduct && (
         <div className="fixed bottom-0 left-0 right-0 bg-white shadow-2xl shadow-black/70 p-6 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
