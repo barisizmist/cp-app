@@ -55,10 +55,10 @@ const CategoryDetailPage = () => {
   return (
     <RouteLayout>
       <div className="p-4">
-        <Button onClick={() => router.back()} className="mb-4">
-          ← Geri
-        </Button>
-        <h1 className="text-3xl font-bold uppercase mb-6">{category}</h1>
+        <div className="flex items-center mb-4">
+          <Button onClick={() => router.back()}>← Geri</Button>
+          <h1 className="text-2xl font-bold uppercase ml-4">{category}</h1>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {products.map((product) => (
             <Card key={product.id} className="p-4">
