@@ -12,7 +12,6 @@ const Home = ({
       <Link href={`/category`} passHref>
         Kategoriler
       </Link>
-      {children}
     </RootLayout>
   );
 };

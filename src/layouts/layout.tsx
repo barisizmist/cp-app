@@ -40,7 +40,7 @@ export default function RootLayout({
               <main className="py-8">
                 {/* container to center the content */}
                 <div className="max-w-7xl mx-auto px-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">{children}</div>
+                  <div>{children}</div>
                 </div>
               </main>
             </div>

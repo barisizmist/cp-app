@@ -18,11 +18,11 @@ const categories = [
 const CategoryPage = () => {
   return (
     <RootLayout>
-      <Fragment>
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {categories.map((category, index) => (
           <DynamicCategoryCard key={index} imageSrc={category.imageSrc} title={category.title} />
         ))}
-      </Fragment>
+      </div>
     </RootLayout>
   );
 };
