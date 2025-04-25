@@ -4,14 +4,18 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import RouteLayout from '@/layouts/layout';
+import AddToCartPopup from '@/components/ui/Popup';
+import SelectedProductDetails from '@/components/ui/SelectedProductDetails';
+import { useAtom } from 'jotai';
+import { selectedProductAtom, quantityAtom } from '@/stores/selectedProductStore';
 
 const CategoryDetailPage = () => {
   const router = useRouter();
   const { category } = router.query;
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [quantity, setQuantity] = useState(1);
-
+  const [selectedProduct, setSelectedProduct] = useAtom(selectedProductAtom);
+  const [quantity, setQuantity] = useAtom(quantityAtom);
+  const [showAddToCartPopup, setShowAddToCartPopup] = useState(false);
   const products = [
     {
       id: 1,
@@ -52,6 +56,23 @@ const CategoryDetailPage = () => {
     setQuantity((prev) => Math.max(1, prev + change));
   };
 
+  const handleAddToCart = () => {
+    if (!selectedProduct) return; // Ensure selectedProduct is defined
+    setShowAddToCartPopup(true);
+    // Example implementation: Add the selected product to the cart
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const existingProductIndex = cart.findIndex((item) => item.id === selectedProduct.id);
+
+    if (existingProductIndex > -1) {
+      cart[existingProductIndex].quantity += quantity;
+    } else {
+      cart.push({ ...selectedProduct, quantity });
+    }
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+    alert(`${selectedProduct.name} has been added to the cart!`);
+  };
+
   return (
     <RouteLayout>
       <div className="p-4">
@@ -77,44 +98,17 @@ const CategoryDetailPage = () => {
           ))}
         </div>
 
-        {/* <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
-          <DialogOverlay className="fixed inset-0 bg-black bg-opacity-50" />
-          <DialogContent className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
-            {selectedImage && (
-              <div className="relative w-full max-w-3xl h-auto">
-                <Image src={selectedImage} alt="Selected Product" layout="responsive" width={800} height={600} objectFit="contain" className="rounded-md" />
-              </div>
-            )}
-          </DialogContent>
-        </Dialog> */}
-
         {selectedProduct && (
-          <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 shadow-2xl shadow-black/70 p-6 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
-            <button className="absolute top-2 right-2 text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-400" onClick={() => setSelectedProduct(null)}>
-              ✕
-            </button>
-            <div className="flex items-center">
-              <Image src={selectedProduct.image} alt={selectedProduct.name} width={80} height={80} className="rounded-md" />
-              <div className="ml-4">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{selectedProduct.name}</h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">{selectedProduct.description}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="text-lg font-bold text-gray-900 dark:text-gray-100">₺{(selectedProduct.price * quantity).toFixed(2)}</span>
-              <div className="flex items-center">
-                <button className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-l-md text-gray-900 dark:text-gray-100" onClick={() => handleQuantityChange(-1)}>
-                  -
-                </button>
-                <span className="px-4 py-2 border-t border-b border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100">{quantity}</span>
-                <button className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-r-md text-gray-900 dark:text-gray-100" onClick={() => handleQuantityChange(1)}>
-                  +
-                </button>
-              </div>
-              <Button className=" px-4 py-2 rounded-md">Ekle ₺{(selectedProduct.price * quantity).toFixed(2)}</Button>
-            </div>
-          </div>
+          <SelectedProductDetails
+            product={selectedProduct}
+            quantity={quantity}
+            onQuantityChange={handleQuantityChange}
+            onAddToCart={handleAddToCart}
+            onClose={() => setShowAddToCartPopup(false)}
+          />
         )}
+
+        {showAddToCartPopup && <AddToCartPopup quantity={quantity} totalPrice={selectedProduct?.price * quantity} onClose={() => setShowAddToCartPopup(false)} />}
       </div>
     </RouteLayout>
   );
